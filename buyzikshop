@@ -6,185 +6,55 @@
     <title>Buyzikshop</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        :root {
-            --tg-theme-bg-color: #ffffff;
-            --tg-theme-text-color: #000000;
-            --accent-color: #e32636;
-        }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
-            background-color: var(--tg-theme-bg-color);
-            color: var(--tg-theme-text-color);
-            margin: 0; padding: 0;
-            box-sizing: border-box;
-        }
-        *, *::before, *::after { box-sizing: inherit; }
-
-        /* Шапка сайта */
-        header {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 12px 15px; border-bottom: 1px solid #f0f0f0;
-            position: sticky; top: 0; background: white; z-index: 10;
-        }
-        .logo { font-size: 22px; font-weight: bold; letter-spacing: -0.5px; }
+        :root { --tg-theme-bg-color: #ffffff; --tg-theme-text-color: #000000; --accent-color: #e32636; }
+        body { font-family: -apple-system, BlinkMacSystemFont, Arial, sans-serif; background-color: var(--tg-theme-bg-color); color: var(--tg-theme-text-color); margin: 0; padding: 0; }
+        header { display: flex; justify-content: space-between; align-items: center; padding: 12px 15px; border-bottom: 1px solid #f0f0f0; position: sticky; top: 0; background: white; z-index: 10; }
+        .logo { font-size: 22px; font-weight: bold; }
         .cart-icon { font-size: 22px; position: relative; cursor: pointer; }
-        .cart-badge {
-            position: absolute; top: -5px; right: -8px; background: black; color: white;
-            font-size: 11px; padding: 2px 6px; border-radius: 5px; font-weight: bold;
-        }
-
-        /* Поиск и фильтры */
-        .search-container { padding: 10px 15px 5px 15px; }
-        .search-bar {
-            width: 100%; padding: 10px 12px; border: 1.5px solid #000; border-radius: 8px; font-size: 15px;
-        }
-        .filter-row {
-            display: flex; gap: 10px; padding: 5px 15px 15px 15px; overflow-x: auto;
-        }
-        .btn-filter {
-            background: black; color: white; border: none; padding: 8px 16px; border-radius: 6px;
-            font-weight: bold; font-size: 13px; white-space: nowrap;
-        }
-        .btn-sort {
-            background: white; color: black; border: 1px solid #ccc; padding: 8px 16px; border-radius: 6px;
-            font-size: 13px; display: flex; align-items: center; gap: 5px; white-space: nowrap;
-        }
-
-        /* Сетка товаров */
-        .catalog-grid {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 0 15px 15px 15px;
-        }
-        .card {
-            border: 1px solid #f0f0f0; border-radius: 8px; padding: 8px; position: relative;
-            display: flex; flex-direction: column; justify-content: space-between;
-        }
-        .sale-badge {
-            position: absolute; top: 12px; left: 12px; background: black; color: white;
-            padding: 3px 8px; font-size: 10px; font-weight: bold; border-radius: 4px; z-index: 2;
-        }
-        .discount-badge {
-            background: var(--accent-color); color: white; padding: 2px 5px; font-size: 12px;
-            border-radius: 4px; font-weight: bold;
-        }
+        .cart-badge { position: absolute; top: -5px; right: -8px; background: black; color: white; font-size: 11px; padding: 2px 6px; border-radius: 5px; font-weight: bold; }
+        .catalog-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 15px; }
+        .card { border: 1px solid #f0f0f0; border-radius: 8px; padding: 8px; display: flex; flex-direction: column; justify-content: space-between; }
         .price-box { display: flex; align-items: center; gap: 6px; margin: 4px 0; }
-        .old-price { text-decoration: line-through; color: #aaa; font-size: 13px; }
         .new-price { font-weight: bold; color: var(--accent-color); font-size: 16px; }
-        .stock-indicator { font-size: 12px; color: #2ec4b6; margin-bottom: 8px; display: flex; align-items: center; gap: 4px; }
-
-        /* Скрытая Админка */
-        .admin-panel {
-            background: #fff5f5; border: 2px dashed var(--accent-color); margin: 15px; padding: 15px; border-radius: 8px;
-            display: none;
-        }
-        .admin-panel.active { display: block; }
-        .admin-nav { display: flex; gap: 10px; margin-bottom: 15px; }
-        .input-field {
-            width: 100%; padding: 10px; margin: 8px 0; border: 1px solid #ccc; border-radius: 6px; font-size: 14px;
-        }
-        .order-card {
-            border: 1px solid #ddd; padding: 12px; margin-bottom: 10px; background: white; border-radius: 6px;
-        }
-
-        /* Корзина */
+        .btn-action { width: 100%; background: black; color: white; border: none; padding: 12px; border-radius: 8px; font-size: 15px; font-weight: bold; cursor: pointer; margin-top: 15px; }
         .cart-page { padding: 15px; display: none; }
-        .cart-item-row {
-            display: flex; gap: 12px; border: 1px solid #eee; padding: 10px; border-radius: 8px; margin-bottom: 10px;
-        }
-        .btn-action {
-            width: 100%; background: black; color: white; border: none; padding: 12px;
-            border-radius: 8px; font-size: 15px; font-weight: bold; cursor: pointer; margin-top: 15px;
-        }
-
-        /* Боковое меню категорий */
-        .sidebar {
-            position: fixed; top: 0; left: -280px; width: 280px; height: 100%; background: white;
-            box-shadow: 2px 0 10px rgba(0,0,0,0.1); z-index: 20; transition: left 0.3s ease; padding: 20px;
-        }
-        .sidebar.open { left: 0; }
-        .sidebar-header { display: flex; justify-content: space-between; align-items: center; font-size: 18px; font-weight: bold; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
-        .category-link { padding: 12px 0; font-size: 16px; border-bottom: 1px solid #f9f9f9; cursor: pointer; }
-        .category-link:hover { color: var(--accent-color); }
-        .overlay { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.4); z-index:15; display:none; }
+        .input-field { width: 100%; padding: 10px; margin: 8px 0; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; box-sizing: border-box; }
     </style>
 </head>
 <body>
 
-<div class="overlay" id="menu-overlay" onclick="closeMenu()"></div>
-
-<div class="sidebar" id="sidebar-menu">
-    <div class="sidebar-header">
-        <span>КАТАЛОГ</span>
-        <span onclick="closeMenu()" style="cursor:pointer; font-size: 20px;">✕</span>
-    </div>
-    <div class="category-link" onclick="filterCategory('Все')">Все товары</div>
-    <div class="category-link" onclick="filterCategory('Шорты')">Шорты</div>
-    <div class="category-link" onclick="filterCategory('Джинсы')">Джинсы</div>
-    <div class="category-link" onclick="filterCategory('Футболки')">Футболки</div>
-    <div class="category-link" onclick="filterCategory('Худи')">Худи</div>
-    <div class="category-link" onclick="filterCategory('Спортивные штаны')">Спортивные штаны</div>
-    <div class="category-link" onclick="filterCategory('Кофты')">Кофты</div>
-    <div class="category-link" onclick="filterCategory('Кроссовки')">Кроссовки</div>
-</div>
-
 <header>
-    <div style="display: flex; align-items: center; gap: 15px;">
-        <span style="font-size: 24px; cursor: pointer;" onclick="openMenu()">☰</span>
-        <div class="logo" onclick="viewCatalog()">Buyzikshop</div>
-    </div>
+    <div class="logo">Buyzikshop</div>
     <div class="cart-icon" onclick="viewCart()">🛍️<span class="cart-badge" id="cart-count">0</span></div>
 </header>
 
-<div id="admin-section" class="admin-panel">
-    <h3>👑 Управление магазином (@byzikk1)</h3>
-    <div class="admin-nav">
-        <button onclick="toggleAdminTab('add')" style="padding: 6px 12px;">➕ Товар</button>
-        <button onclick="toggleAdminTab('orders')" style="padding: 6px 12px;">📦 Заказы людей</button>
-    </div>
-    
-    <div id="admin-add-product" style="display:none;">
-        <input type="text" id="p-title" class="input-field" placeholder="Название товара">
-        <input type="text" id="p-category" class="input-field" placeholder="Категория (точно как в меню)">
-        <input type="number" id="p-old-price" class="input-field" placeholder="Старая цена (без скидки)">
-        <input type="number" id="p-new-price" class="input-field" placeholder="Новая цена (для продажи)">
-        <input type="number" id="p-stock" class="input-field" placeholder="В наличии (Stock количество)">
-        <input type="text" id="p-image" class="input-field" placeholder="Ссылка на фото товара">
-        <button class="btn-action" onclick="submitProduct()">Сохранить на сайт</button>
-    </div>
-
-    <div id="admin-orders-list" style="display:none;">
-        <h4>Заказы покупателей:</h4>
-        <div id="orders-container">Загрузка заказов...</div>
-    </div>
-</div>
-
 <div id="catalog-page">
-    <div class="search-container">
-        <input type="text" class="search-bar" placeholder="Поиск товаров...">
-    </div>
-    <div class="filter-row">
-        <button class="btn-filter">ВСЕ ТОВАРЫ</button>
-        <button class="btn-sort">⚙ Фильтр и сортировка</button>
-    </div>
     <div class="catalog-grid" id="catalog-grid">
+        <div class="card">
+            <img src="https://via.placeholder.com/150" style="width:100%; height:140px; object-fit:cover; border-radius:6px;">
+            <div style="font-weight:bold; margin-top:8px; font-size:14px;">Худи / Кроссовки / Вещи</div>
+            <div class="price-box"><span class="new-price">1200₴</span></div>
+            <div style="font-size: 12px; color: #2ec4b6; margin-bottom: 8px;">● В наличии</div>
+            <button class="btn-action" style="padding:6px; margin-top:auto; font-size:12px;" onclick="addToCart(1, 'Стильная вещь', 1200)">В корзину</button>
         </div>
+    </div>
 </div>
 
 <div id="cart-page" class="cart-page">
     <h2 style="margin-top: 0;">КОРЗИНА</h2>
     <div id="cart-items-container"></div>
-    <hr style="border: 0; border-top: 1px solid #eee; margin: 15px 0;">
-    <div style="display: flex; justify-content: space-between; font-size: 18px; font-weight: bold;">
-        <span>Итого выбранное:</span>
+    <div style="display: flex; justify-content: space-between; font-size: 18px; font-weight: bold; margin-top: 15px;">
+        <span>Итого к оплате:</span>
         <span style="color: var(--accent-color);"><span id="cart-total">0</span>₴</span>
     </div>
     
-    <h4 style="margin: 20px 0 10px 0;">Данные доставки Новой Почты:</h4>
-    <input type="text" id="order-fio" class="input-field" placeholder="Имя и Фамилия получателя">
+    <h4 style="margin: 20px 0 10px 0;">Доставка Новая Почта:</h4>
+    <input type="text" id="order-fio" class="input-field" placeholder="ФИО получателя">
     <input type="tel" id="order-phone" class="input-field" placeholder="Номер телефона">
-    <input type="text" id="order-city" class="input-field" placeholder="Город / Населенный пункт">
-    <input type="text" id="order-post" class="input-field" placeholder="Номер отделения Новой Почты">
+    <input type="text" id="order-city" class="input-field" placeholder="Город">
+    <input type="text" id="order-post" class="input-field" placeholder="Номер отделения НП">
     
-    <button class="btn-action" style="background: #000;" onclick="checkout()">ОПЛАТИТЬ</button>
+    <button class="btn-action" onclick="checkout()">ОПЛАТИТЬ</button>
     <button class="btn-action" style="background: #aaa; margin-top: 8px;" onclick="viewCatalog()">Назад в каталог</button>
 </div>
 
@@ -192,62 +62,7 @@
     const tg = window.Telegram.WebApp;
     tg.expand();
 
-    // ВАЖНО: Сюда вставим ссылку от Render на третьем шаге!
-    const API_URL = "https://buyzikshop-backend.onrender.com"; 
-    
     let cart = [];
-    let currentCategory = "Все";
-    let username = tg.initDataUnsafe?.user?.username || "Guest";
-    let userId = tg.initDataUnsafe?.user?.id || "1234567";
-
-    // Проверка прав админа
-    if (username.toLowerCase() === "byzikk1") {
-        document.getElementById('admin-section').classList.add('active');
-        loadAdminOrders();
-    }
-
-    function openMenu() {
-        document.getElementById('sidebar-menu').classList.add('open');
-        document.getElementById('menu-overlay').style.display = 'block';
-    }
-    function closeMenu() {
-        document.getElementById('sidebar-menu').classList.remove('open');
-        document.getElementById('menu-overlay').style.display = 'none';
-    }
-
-    async function loadProducts() {
-        try {
-            const res = await fetch(`${API_URL}/api/products`);
-            const products = await res.json();
-            const grid = document.getElementById('catalog-grid');
-            grid.innerHTML = '';
-            
-            products.forEach(p => {
-                if(currentCategory !== "Все" && p.category !== currentCategory) return;
-                
-                grid.innerHTML += `
-                    <div class="card">
-                        ${p.discount ? `<div class="sale-badge">SALE</div>` : ''}
-                        <img src="${p.image}" style="width:100%; height:150px; object-fit:cover; border-radius:6px;">
-                        <div style="font-weight:bold; margin-top:8px; font-size:15px;">${p.title}</div>
-                        <div class="price-box">
-                            <span class="new-price">${p.new_price}₴</span>
-                            ${p.old_price ? `<span class="old-price">${p.old_price}₴</span>` : ''}
-                            ${p.discount ? `<div class="discount-badge">${p.discount}</div>` : ''}
-                        </div>
-                        <div class="stock-indicator">● Stock: ${p.stock}</div>
-                        <button class="btn-action" style="padding:6px; margin-top:auto; font-size:13px;" onclick="addToCart(${p.id}, '${p.title}', ${p.new_price})">В корзину</button>
-                    </div>
-                `;
-            });
-        } catch (e) { console.log("Ошибка загрузки товаров"); }
-    }
-
-    function filterCategory(cat) {
-        currentCategory = cat;
-        loadProducts();
-        closeMenu();
-    }
 
     function addToCart(id, title, price) {
         cart.push({id, title, price});
@@ -268,12 +83,9 @@
         
         cart.forEach((item, index) => {
             container.innerHTML += `
-                <div class="cart-item-row">
-                    <div style="flex-grow:1;">
-                        <b>${item.title}</b><br>
-                        <span style="color:var(--accent-color); font-weight:bold;">${item.price}₴</span>
-                    </div>
-                    <span style="color:red; cursor:pointer; font-weight:bold;" onclick="removeFromCart(${index})">✕</span>
+                <div style="display:flex; justify-content:space-between; border:1px solid #eee; padding:10px; border-radius:8px; margin-bottom:10px;">
+                    <div><b>${item.title}</b><br><span style="color:var(--accent-color); font-weight:bold;">${item.price}₴</span></div>
+                    <span style="color:red; cursor:pointer;" onclick="removeFromCart(${index})">✕</span>
                 </div>
             `;
             total += item.price;
@@ -292,83 +104,17 @@
         document.getElementById('cart-page').style.display = 'none';
     }
 
-    async function checkout() {
+    function checkout() {
         const fio = document.getElementById('order-fio').value;
         const phone = document.getElementById('order-phone').value;
         const city = document.getElementById('order-city').value;
         const post = document.getElementById('order-post').value;
 
-        if(!fio || !phone || !city || !post) {
-            alert("Пожалуйста, заполните все поля для Новой Почты!");
-            return;
-        }
-        if(cart.length === 0) { alert("Ваша корзина пуста!"); return; }
+        if(!fio || !phone || !city || !post) { alert("Заполните данные доставки!"); return; }
+        if(cart.length === 0) { alert("Корзина пуста!"); return; }
 
-        let total = document.getElementById('cart-total').innerText;
-
-        const response = await fetch(`${API_URL}/api/orders/create`, {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({
-                user_id: userId, username: username, fio: fio,
-                phone: phone, city: city, post_office: post,
-                items: JSON.stringify(cart), total: total
-            })
-        });
-
-        if (response.ok) {
-            alert("Заказ успешно оформлен! Ожидайте подтверждения.");
-            cart = [];
-            document.getElementById('cart-count').innerText = 0;
-            viewCatalog();
-        }
+        alert("Заказ принят! Скоро мы запустим сервер, чтобы он приходил тебе в ТГ.");
     }
-
-    // Админ функции
-    function toggleAdminTab(tab) {
-        document.getElementById('admin-add-product').style.display = tab === 'add' ? 'block' : 'none';
-        document.getElementById('admin-orders-list').style.display = tab === 'orders' ? 'block' : 'none';
-    }
-
-    async function submitProduct() {
-        const title = document.getElementById('p-title').value;
-        const category = document.getElementById('p-category').value;
-        const old_price = document.getElementById('p-old-price').value;
-        const new_price = document.getElementById('p-new-price').value;
-        const stock = document.getElementById('p-stock').value;
-        const image = document.getElementById('p-image').value;
-
-        await fetch(`${API_URL}/api/products/add`, {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({title, category, old_price, new_price, stock, image})
-        });
-        alert("Товар добавлен!");
-        loadProducts();
-    }
-
-    async function loadAdminOrders() {
-        try {
-            const res = await fetch(`${API_URL}/api/orders`);
-            const orders = await res.json();
-            const container = document.getElementById('orders-container');
-            container.innerHTML = '';
-            
-            orders.forEach(o => {
-                container.innerHTML += `
-                    <div class="order-card">
-                        <b>Заказ #${o.id} [${o.status}]</b><br>
-                        Клиент: <b>${o.fio}</b> (@${o.username})<br>
-                        Тел: ${o.phone}<br>
-                        Доставка: г. ${o.city}, НП №${o.post_office}<br>
-                        Сумма: <b style="color:red">${o.total}₴</b>
-                    </div>
-                `;
-            });
-        } catch(e) { }
-    }
-
-    loadProducts();
 </script>
 </body>
 </html>
